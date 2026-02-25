@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# VS Code workspace
+*.code-workspace
+
+# Media uploads (resumes/scrolls)
+media/scrolls/

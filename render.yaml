@@ -1,0 +1,78 @@
+services:
+  - type: web
+    name: careerconnect-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: "./build.sh"
+    startCommand: "cd /opt/render/project/src/backend && gunicorn careerconnect.asgi:application -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: careerconnect.settings
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        sync: false      # Set in Render dashboard: your-app.onrender.com
+      - key: FRONTEND_URL
+        sync: false      # Set to your Vercel URL e.g. https://your-app.vercel.app
+      - key: DATABASE_URL
+        fromDatabase:
+          name: careerconnect-db
+          property: connectionString
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: careerconnect-db
+          property: database
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: careerconnect-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: careerconnect-db
+          property: password
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: careerconnect-db
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: careerconnect-db
+          property: port
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM_EMAIL
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: SENDGRID_FROM_EMAIL
+        sync: false
+      - key: SENDGRID_FROM_NAME
+        value: CareerConnect
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_FROM_EMAIL
+        sync: false
+      - key: BREVO_FROM_NAME
+        value: CareerConnect
+
+databases:
+  - name: careerconnect-db
+    databaseName: careerconnect
+    user: careerconnect_user
+    plan: free
