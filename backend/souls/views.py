@@ -3,9 +3,22 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
+from django.db import DatabaseError
 def health_check(request):
-    """Health check endpoint for uptime monitoring."""
-    return JsonResponse({"status": "ok"})
+    """Health check endpoint for uptime monitoring.
+
+    Also performs a lightweight DB read so external pings keep the
+    Supabase/PostgreSQL connection warm.
+    """
+    db_status = "ok"
+
+    try:
+        # Fetch a single id to trigger a real read query with minimal load.
+        User.objects.values_list('id', flat=True).first()
+    except DatabaseError:
+        db_status = "error"
+
+    return JsonResponse({"status": "ok", "database": db_status})
 
 from .models import UserProfile, User
 from .forms import (
